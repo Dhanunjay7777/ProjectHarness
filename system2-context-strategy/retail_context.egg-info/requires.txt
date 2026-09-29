@@ -1,0 +1,6 @@
+anthropic==0.69.0
+
+[dev]
+pytest>=8.0
+mypy>=1.10
+ruff>=0.5

@@ -1,0 +1,2 @@
+[console_scripts]
+shift-monitor = shift_monitor.__main__:main
