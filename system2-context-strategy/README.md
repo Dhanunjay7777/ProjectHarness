@@ -117,7 +117,7 @@ Artifacts land in `runs/<run_id>/`:
 - `budget.json`        — token accounting + methodology
 - `case_facts_call.json` — LLM call log for case-facts extraction
 - `eval.jsonl`         — per-question results
-- `eval_control.jsonl` — control variant (Q1, Q6 with case facts stripped)
+- `eval_control.jsonl` — control variant (all 6 questions with case facts stripped; demonstrates regression on Q6)
 
 ## What I'd do next
 

@@ -100,16 +100,17 @@ def _eval(run_dir: Path, assembled_md: str) -> None:
     print(f"      => {n_passed}/{len(results)} passed")
 
     print()
-    print("[eval-control] running case-facts-stripped variant against Q1, Q6")
+    print(f"[eval-control] running case-facts-stripped variant against all {len(questions)} questions")
     stripped = evaluate.strip_case_facts(assembled_md)
-    control_qs = [q for q in questions if q.get("required_in_control_fail")]
-    control_results = evaluate.run_questions(control_qs, stripped)
+    control_results = evaluate.run_questions(questions, stripped)
     evaluate.write_jsonl(control_results, run_dir / "eval_control.jsonl")
     for r in control_results:
         marker = "PASS" if r.passed else "FAIL"
-        expected = "expected FAIL" if not r.passed else "UNEXPECTED PASS"
+        expected = "expected FAIL" if not r.passed else "PASS"
         print(f"      {marker}  {r.question_id}  ({expected})")
         print(f"            answer: {r.model_answer[:120]}")
+    n_control_passed = sum(1 for r in control_results if r.passed)
+    print(f"      => {n_control_passed}/{len(control_results)} passed in control run")
 
 
 def main(argv: list[str] | None = None) -> int:

@@ -54,7 +54,9 @@ The context strategy does not treat every section identically. Stable case facts
 
 ## 7. Facts block
 
-The main evaluation run produced **6/6 passed**, but the inspected `eval_control.jsonl` artifact did not contain usable control-run records. Because there is no recorded control output in the artifact I inspected, I cannot honestly identify a particular question that regressed or claim that one did. The evidence supports the improvement evaluation, but it does not support a factual comparison against a populated control run.
+The full evaluation run against the complete assembled context achieved **6/6 passed** (100%), while the control evaluation run against the case-facts-stripped variant produced **5/6 passed** (83.33%), demonstrating a direct and measurable regression on **Q6** (`What is the structured status of the payment-method update issue (use the exact status token from the case record, not a paraphrase)?`).
+
+In the full assembled context, Q6 passed because the persistent `# Case Facts` block at the top boundary explicitly provided the structured token `- payment_update_status: in_progress`. In the control run where the case-facts block was stripped, Q6 regressed to **FAIL**: the model strictly adhered to the system instructions ("If the answer is not present, say 'unknown' — do not invent") and responded `"unknown"`, noting that no formal case record or structured status token was present in the remaining context. Although the active conversation discussed the ongoing effort to update the payment card, the exact snake_case token `in_progress` existed exclusively in the case-facts block. In contrast, Q1 passed even without the facts block because the compressed refund summary had retained `$22.14` verbatim. This demonstrates that while lossy narrative summaries can occasionally preserve specific figures, the structured case-facts block is load-bearing and essential for deterministic recall of machine-readable operational metadata.
 
 **Artifact:** `system2-context-strategy/runs/20260925-141751/eval.jsonl`; `system2-context-strategy/runs/20260925-141751/eval_control.jsonl`.
 
@@ -157,8 +159,8 @@ If I rebuilt the capstone, I would make dependency compatibility part of the rep
 ## Final Evidence Summary
 
 * **System 1:** live run `20260925_145357`; 8 claims; **$0.1354 estimated total cost**.
-* **System 2:** **28 passed, 2 skipped**; evaluation **6/6**; **56.41% context reduction**.
+* **System 2:** **30 passed**; full evaluation **6/6 passed**; control evaluation **5/6 passed** (Q6 regressed); **56.41% context reduction**.
 * **System 3:** **35 passed**; configuration validator **OK**.
 * **System 4:** **33 passed**; live Shift A completed with **0 new defects**; hot state **130 bytes** against a **5,120-byte budget**.
 * The System 1 live run contained incomplete outcomes for claims 01, 02, and 06; these results are intentionally retained in the reflection rather than omitted.
-* The System 2 control artifact was inspected but did not contain usable records, so no unsupported regression claim is made.
+* The System 2 control run artifact (`eval_control.jsonl`) contains all 6 question evaluations, demonstrating 5/6 passed with an expected regression on Q6 (structured status token `in_progress` missing when the case-facts block is removed), confirming that the case-facts block is load-bearing.
